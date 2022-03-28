@@ -1,49 +1,29 @@
-import React from "react";
+import { observer } from "mobx-react-lite";
+import React, { SyntheticEvent, useState } from "react";
 import { Button, Card, Item } from "semantic-ui-react";
 import { Product } from "../../../app/layout/models/product";
+import { useStore } from "../../../app/stores/store";
 
-interface Props {
-	products: Product[];
-	selectProduct: (id: string) => void;
-	deleteProduct: (id: string) => void;
-}
+export default observer(function ProductList() {
+	const { productStore } = useStore();
+	const {
+		deleteProduct,
+		productsByDate,
+		loading,
+		selectProduct,
+	} = productStore;
+	const [target, setTarget] = useState("");
 
-export default function ProductListList({
-	products,
-	selectProduct,
-	deleteProduct,
-}: Props) {
+	function handleProductDelete(
+		e: SyntheticEvent<HTMLButtonElement>,
+		id: string
+	) {
+		setTarget(e.currentTarget.name);
+		deleteProduct(id);
+	}
 	return (
-		// <Segment>
-		// 	<Item.Group>
-		// 		{products.map((product) => (
-		// 			<Item key={product.id}>
-		// 				<Item.Image
-		// 					size="small"
-		// 					src="https://react.semantic-ui.com/images/wireframe/image.png"
-		// 				/>
-
-		// 				<Item.Content>
-		// 					<Item.Header as="a">{product.productName}</Item.Header>
-		// 					<Item.Meta>
-		// 						{product.dateCreated} - {product.expirationDate}
-		// 					</Item.Meta>
-		// 					<Item.Description>
-		// 						<div>{product.description}</div>
-		// 					</Item.Description>
-
-		// 					<Item.Extra>
-		// 						<Button floated="right" content="View" color="blue" />
-		// 						<Label basic content={product.price} />
-		// 					</Item.Extra>
-		// 				</Item.Content>
-		// 			</Item>
-		// 		))}
-		// 	</Item.Group>
-		// </Segment>
-
 		<Card fluid>
-			{products.map((product) => (
+			{productsByDate.map((product) => (
 				<Item.Group key={product.id}>
 					{/* <Image
 						src="https://react.semantic-ui.com/images/avatar/large/matthew.png"
@@ -71,7 +51,9 @@ export default function ProductListList({
 								color="blue"
 							/>
 							<Button
-								onClick={() => deleteProduct(product.id)}
+								name={product.id}
+								loading={loading && target === product.id}
+								onClick={(e) => handleProductDelete(e, product.id)}
 								floated="right"
 								content="Delete"
 								color="red"
@@ -82,4 +64,4 @@ export default function ProductListList({
 			))}
 		</Card>
 	);
-}
+});

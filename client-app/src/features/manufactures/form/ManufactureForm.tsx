@@ -1,18 +1,18 @@
-import React, { ChangeEvent, useState } from "react";
+import { observer } from "mobx-react-lite";
+import { ChangeEvent, useState } from "react";
 import { Button, Form, Segment } from "semantic-ui-react";
-import { Manufacture } from "../../../app/layout/models/manufacture";
+import { useStore } from "../../../app/stores/store";
 
-interface Props {
-	category: Manufacture | undefined;
-	closeForm: () => void;
-	createOrEdit: (manufacture: Manufacture) => void;
-}
+export default observer(function ManufactureForm() {
+	const { manufactureStore } = useStore();
+	const {
+		selectedManufacture,
+		closeForm,
+		createManufacture,
+		updateManufacture,
+		loading,
+	} = manufactureStore;
 
-export default function ManufactureForm({
-	category: selectedManufacture,
-	closeForm,
-	createOrEdit,
-}: Props) {
 	const initialState = selectedManufacture ?? {
 		id: "",
 		manufacturerName: "",
@@ -23,7 +23,9 @@ export default function ManufactureForm({
 	const [manufacture, setManufacture] = useState(initialState);
 
 	function handlesSubmit() {
-		createOrEdit(manufacture);
+		manufacture.id
+			? updateManufacture(manufacture)
+			: createManufacture(manufacture);
 	}
 
 	function handleInputChange(
@@ -54,7 +56,13 @@ export default function ManufactureForm({
 					name="countryOfOrigin"
 					onChange={handleInputChange}
 				/>
-				<Button floated="right" positive type="submit" content="Submit" />
+				<Button
+					loading={loading}
+					floated="right"
+					positive
+					type="submit"
+					content="Submit"
+				/>
 				<Button
 					onClick={closeForm}
 					floated="right"
@@ -64,4 +72,4 @@ export default function ManufactureForm({
 			</Form>
 		</Segment>
 	);
-}
+});

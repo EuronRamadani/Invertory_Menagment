@@ -1,18 +1,18 @@
+import { observer } from "mobx-react-lite";
 import { ChangeEvent, useState } from "react";
 import { Button, Form, Segment } from "semantic-ui-react";
-import { Category } from "../../../app/layout/models/category";
+import { useStore } from "../../../app/stores/store";
 
-interface Props {
-	category: Category | undefined;
-	closeForm: () => void;
-	createOrEdit: (category: Category) => void;
-}
+export default observer(function CategoryForm() {
+	const { categoryStore } = useStore();
+	const {
+		selectedCategory,
+		closeForm,
+		createCategory,
+		updateCategory,
+		loading,
+	} = categoryStore;
 
-export default function CategoryForm({
-	category: selectedCategory,
-	closeForm,
-	createOrEdit,
-}: Props) {
 	const initialState = selectedCategory ?? {
 		id: "",
 		categoryName: "",
@@ -22,7 +22,7 @@ export default function CategoryForm({
 	const [category, setCategory] = useState(initialState);
 
 	function handlesSubmit() {
-		createOrEdit(category);
+		category.id ? updateCategory(category) : createCategory(category);
 	}
 
 	function handleInputChange(
@@ -47,7 +47,13 @@ export default function CategoryForm({
 					name="description"
 					onChange={handleInputChange}
 				/>
-				<Button floated="right" positive type="submit" content="Submit" />
+				<Button
+					loading={loading}
+					floated="right"
+					positive
+					type="submit"
+					content="Submit"
+				/>
 				<Button
 					onClick={closeForm}
 					floated="right"
@@ -57,4 +63,4 @@ export default function CategoryForm({
 			</Form>
 		</Segment>
 	);
-}
+});

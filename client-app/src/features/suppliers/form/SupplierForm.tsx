@@ -1,18 +1,17 @@
-import React, { ChangeEvent, useState } from "react";
+import { observer } from "mobx-react-lite";
+import { ChangeEvent, useState } from "react";
 import { Button, Form, Segment } from "semantic-ui-react";
-import { Supplier } from "../../../app/layout/models/supplier";
+import { useStore } from "../../../app/stores/store";
 
-interface Props {
-	supplier: Supplier | undefined;
-	closeForm: () => void;
-	createOrEdit: (supplier: Supplier) => void;
-}
-
-export default function SupplierForm({
-	supplier: selectedSupplier,
-	closeForm,
-	createOrEdit,
-}: Props) {
+export default observer(function SupplierForm() {
+	const { supplierStore } = useStore();
+	const {
+		selectedSupplier,
+		createSupplier,
+		updateSupplier,
+		loading,
+		closeForm,
+	} = supplierStore;
 	const initialState = selectedSupplier ?? {
 		id: "",
 		supplierName: "",
@@ -23,7 +22,7 @@ export default function SupplierForm({
 	const [supplier, setSupplier] = useState(initialState);
 
 	function handlesSubmit() {
-		createOrEdit(supplier);
+		supplier.id ? updateSupplier(supplier) : createSupplier(supplier);
 	}
 
 	function handleInputChange(
@@ -53,7 +52,13 @@ export default function SupplierForm({
 					name="countryOfOrigin"
 					onChange={handleInputChange}
 				/>
-				<Button floated="right" positive type="submit" content="Submit" />
+				<Button
+					loading={loading}
+					floated="right"
+					positive
+					type="submit"
+					content="Submit"
+				/>
 				<Button
 					onClick={closeForm}
 					floated="right"
@@ -63,4 +68,4 @@ export default function SupplierForm({
 			</Form>
 		</Segment>
 	);
-}
+});

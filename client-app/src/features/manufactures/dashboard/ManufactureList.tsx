@@ -1,22 +1,30 @@
-import React from "react";
+import { observer } from "mobx-react-lite";
+import { SyntheticEvent, useState } from "react";
 import { Button, Item, Label, Segment } from "semantic-ui-react";
-import { Manufacture } from "../../../app/layout/models/manufacture";
+import { useStore } from "../../../app/stores/store";
 
-interface Props {
-	manufactures: Manufacture[];
-	selectManufacture: (id: string) => void;
-	deleteManufacture: (id: string) => void;
-}
+export default observer(function ManufactureList() {
+	const { manufactureStore } = useStore();
+	const {
+		deleteManufacture,
+		manufacturesByDate,
+		loading,
+		selectManufacture,
+	} = manufactureStore;
 
-export default function ManufactureList({
-	manufactures,
-	selectManufacture,
-	deleteManufacture,
-}: Props) {
+	const [target, setTarget] = useState("");
+
+	function handleManufactureDelete(
+		e: SyntheticEvent<HTMLButtonElement>,
+		id: string
+	) {
+		setTarget(e.currentTarget.name);
+		deleteManufacture(id);
+	}
 	return (
 		<Segment>
 			<Item.Group>
-				{manufactures.map((manufacture) => (
+				{manufacturesByDate.map((manufacture) => (
 					<Item key={manufacture.id}>
 						<Item.Image
 							size="small"
@@ -34,7 +42,9 @@ export default function ManufactureList({
 									color="blue"
 								/>
 								<Button
-									onClick={() => deleteManufacture(manufacture.id)}
+									name={manufacture.id}
+									loading={loading && target === manufacture.id}
+									onClick={(e) => handleManufactureDelete(e, manufacture.id)}
 									floated="right"
 									content="Delete"
 									color="red"
@@ -47,4 +57,4 @@ export default function ManufactureList({
 			</Item.Group>
 		</Segment>
 	);
-}
+});

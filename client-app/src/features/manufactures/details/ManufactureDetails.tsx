@@ -1,18 +1,18 @@
-import React from "react";
 import { Button, Card, Image } from "semantic-ui-react";
-import { Manufacture } from "../../../app/layout/models/manufacture";
+import LoadingComponent from "../../../app/layout/LoadingComponent";
+import { useStore } from "../../../app/stores/store";
 
-interface Props {
-	manufacture: Manufacture;
-	cancelSelectManufacture: () => void;
-	openForm: (id: string) => void;
-}
+export default function ManufactureDetails() {
+	const { manufactureStore } = useStore();
 
-export default function ManufactureDetails({
-	manufacture,
-	cancelSelectManufacture,
-	openForm,
-}: Props) {
+	const {
+		selectedManufacture: manufacture,
+		openForm,
+		cancelSelectedManufacture,
+	} = manufactureStore;
+
+	if (!manufacture) return <LoadingComponent content={""} />;
+
 	return (
 		<Card fluid>
 			<Image src={`/assets/categoryImages/drinks.jpg`} />
@@ -35,7 +35,7 @@ export default function ManufactureDetails({
 						content="Edit"
 					/>
 					<Button
-						onClick={cancelSelectManufacture}
+						onClick={cancelSelectedManufacture}
 						basic
 						color="grey"
 						content="Cancel"

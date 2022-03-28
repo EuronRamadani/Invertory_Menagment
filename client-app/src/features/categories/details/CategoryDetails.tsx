@@ -1,18 +1,19 @@
 import React from "react";
 import { Button, Card, Image } from "semantic-ui-react";
-import { Category } from "../../../app/layout/models/category";
+import LoadingComponent from "../../../app/layout/LoadingComponent";
+import { useStore } from "../../../app/stores/store";
 
-interface Props {
-	category: Category;
-	cancelSelectCategory: () => void;
-	openForm: (id: string) => void;
-}
+export default function CategoryDetails() {
+	const { categoryStore } = useStore();
 
-export default function CategoryDetails({
-	category,
-	cancelSelectCategory,
-	openForm,
-}: Props) {
+	const {
+		selectedCategory: category,
+		openForm,
+		cancelSelectedCategory,
+	} = categoryStore;
+
+	if (!category) return <LoadingComponent content={""} />;
+
 	return (
 		<Card fluid>
 			<Image src={`/assets/categoryImages/drinks.jpg`} />
@@ -32,7 +33,7 @@ export default function CategoryDetails({
 						content="Edit"
 					/>
 					<Button
-						onClick={cancelSelectCategory}
+						onClick={cancelSelectedCategory}
 						basic
 						color="grey"
 						content="Cancel"

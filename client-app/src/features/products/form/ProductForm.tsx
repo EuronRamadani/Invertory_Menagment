@@ -1,18 +1,18 @@
+import { observer } from "mobx-react-lite";
 import React, { ChangeEvent, useState } from "react";
 import { Button, Form, Segment } from "semantic-ui-react";
 import { Product } from "../../../app/layout/models/product";
+import { useStore } from "../../../app/stores/store";
 
-interface Props {
-	product: Product | undefined;
-	closeForm: () => void;
-	createOrEdit: (product: Product) => void;
-}
-
-export default function ProductForm({
-	product: selectedProduct,
-	closeForm,
-	createOrEdit,
-}: Props) {
+export default observer(function ProductForm() {
+	const { productStore } = useStore();
+	const {
+		selectedProduct,
+		closeForm,
+		createProduct,
+		updateProduct,
+		loading,
+	} = productStore;
 	const initialState = selectedProduct ?? {
 		id: "",
 		sku: "",
@@ -27,7 +27,7 @@ export default function ProductForm({
 	const [product, setProduct] = useState(initialState);
 
 	function handlesSubmit() {
-		createOrEdit(product);
+		product.id ? updateProduct(product) : createProduct(product);
 	}
 
 	function handleInputChange(
@@ -70,18 +70,26 @@ export default function ProductForm({
 					onChange={handleInputChange}
 				/>
 				<Form.Input
+					type="date"
 					placeholder="Created date"
 					value={product.dateCreated}
 					name="dateCreated"
 					onChange={handleInputChange}
 				/>
 				<Form.Input
+					type="date"
 					placeholder="Expire date"
 					value={product.expirationDate}
 					name="expirationDate"
 					onChange={handleInputChange}
 				/>
-				<Button floated="right" positive type="submit" content="Submit" />
+				<Button
+					loading={loading}
+					floated="right"
+					positive
+					type="submit"
+					content="Submit"
+				/>
 				<Button
 					onClick={closeForm}
 					floated="right"
@@ -91,4 +99,4 @@ export default function ProductForm({
 			</Form>
 		</Segment>
 	);
-}
+});

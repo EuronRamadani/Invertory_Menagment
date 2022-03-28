@@ -1,18 +1,17 @@
-import React from "react";
 import { Button, Card, Image } from "semantic-ui-react";
-import { Supplier } from "../../../app/layout/models/supplier";
+import LoadingComponent from "../../../app/layout/LoadingComponent";
+import { useStore } from "../../../app/stores/store";
 
-interface Props {
-	supplier: Supplier;
-	cancelSelectSupplier: () => void;
-	openForm: (id: string) => void;
-}
+export default function SupplierDetails() {
+	const { supplierStore } = useStore();
+	const {
+		selectedSupplier: supplier,
+		cancelSelectedSupplier,
+		openForm,
+	} = supplierStore;
 
-export default function SupplierDetails({
-	supplier,
-	cancelSelectSupplier,
-	openForm,
-}: Props) {
+	if (!supplier) return <LoadingComponent content={""} />;
+
 	return (
 		<Card fluid>
 			<Image src={`/assets/categoryImages/drinks.jpg`} />
@@ -35,7 +34,7 @@ export default function SupplierDetails({
 						content="Edit"
 					/>
 					<Button
-						onClick={cancelSelectSupplier}
+						onClick={cancelSelectedSupplier}
 						basic
 						color="grey"
 						content="Cancel"

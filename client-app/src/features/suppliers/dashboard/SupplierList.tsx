@@ -1,22 +1,30 @@
-import React from "react";
+import { observer } from "mobx-react-lite";
+import { SyntheticEvent, useState } from "react";
 import { Button, Item, Label, Segment } from "semantic-ui-react";
-import { Supplier } from "../../../app/layout/models/supplier";
+import { useStore } from "../../../app/stores/store";
 
-interface Props {
-	suppliers: Supplier[];
-	selectSupplier: (id: string) => void;
-	deleteSupplier: (id: string) => void;
-}
+export default observer(function SupplierList() {
+	const { supplierStore } = useStore();
+	const {
+		selectSupplier,
+		deleteSupplier,
+		suppliersByDate,
+		loading,
+	} = supplierStore;
+	const [target, setTarget] = useState("");
 
-export default function SupplierList({
-	deleteSupplier,
-	suppliers,
-	selectSupplier,
-}: Props) {
+	function handleSupplierDelete(
+		e: SyntheticEvent<HTMLButtonElement>,
+		id: string
+	) {
+		setTarget(e.currentTarget.name);
+		deleteSupplier(id);
+	}
+
 	return (
 		<Segment>
 			<Item.Group>
-				{suppliers.map((supplier) => (
+				{suppliersByDate.map((supplier) => (
 					<Item key={supplier.id}>
 						<Item.Image
 							size="small"
@@ -34,7 +42,9 @@ export default function SupplierList({
 									color="blue"
 								/>
 								<Button
-									onClick={() => deleteSupplier(supplier.id)}
+									name={supplier.id}
+									loading={loading && target === supplier.id}
+									onClick={(e) => handleSupplierDelete(e, supplier.id)}
 									floated="right"
 									content="Delete"
 									color="red"
@@ -47,4 +57,4 @@ export default function SupplierList({
 			</Item.Group>
 		</Segment>
 	);
-}
+});

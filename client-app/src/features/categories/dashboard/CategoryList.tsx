@@ -1,22 +1,30 @@
-import React from "react";
+import { observer } from "mobx-react-lite";
+import React, { SyntheticEvent, useState } from "react";
 import { Button, Item, Segment } from "semantic-ui-react";
-import { Category } from "../../../app/layout/models/category";
+import { useStore } from "../../../app/stores/store";
 
-interface Props {
-	categories: Category[];
-	selectCategory: (id: string) => void;
-	deleteCategory: (id: string) => void;
-}
+export default observer(function CategoryList() {
+	const { categoryStore } = useStore();
+	const {
+		deleteCategory,
+		categoriesByDate,
+		loading,
+		selectCategory,
+	} = categoryStore;
+	const [target, setTarget] = useState("");
 
-export default function CategoryList({
-	categories,
-	selectCategory,
-	deleteCategory,
-}: Props) {
+	function handleCategoryDelete(
+		e: SyntheticEvent<HTMLButtonElement>,
+		id: string
+	) {
+		setTarget(e.currentTarget.name);
+		deleteCategory(id);
+	}
+
 	return (
 		<Segment>
 			<Item.Group divided>
-				{categories.map((category) => (
+				{categoriesByDate.map((category) => (
 					<Item key={category.id}>
 						<Item.Image
 							size="small"
@@ -34,7 +42,9 @@ export default function CategoryList({
 									color="blue"
 								/>
 								<Button
-									onClick={() => deleteCategory(category.id)}
+									name={category.id}
+									loading={loading && target === category.id}
+									onClick={(e) => handleCategoryDelete(e, category.id)}
 									floated="right"
 									content="Delete"
 									color="red"
@@ -46,4 +56,4 @@ export default function CategoryList({
 			</Item.Group>
 		</Segment>
 	);
-}
+});

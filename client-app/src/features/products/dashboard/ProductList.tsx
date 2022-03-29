@@ -1,17 +1,12 @@
 import { observer } from "mobx-react-lite";
-import React, { SyntheticEvent, useState } from "react";
+import { SyntheticEvent, useState } from "react";
+import { Link } from "react-router-dom";
 import { Button, Card, Item } from "semantic-ui-react";
-import { Product } from "../../../app/layout/models/product";
 import { useStore } from "../../../app/stores/store";
 
 export default observer(function ProductList() {
 	const { productStore } = useStore();
-	const {
-		deleteProduct,
-		productsByDate,
-		loading,
-		selectProduct,
-	} = productStore;
+	const { deleteProduct, productsByDate, loading } = productStore;
 	const [target, setTarget] = useState("");
 
 	function handleProductDelete(
@@ -45,7 +40,8 @@ export default observer(function ProductList() {
 						<Card.Content extra>{product.price}</Card.Content>
 						<Item.Extra>
 							<Button
-								onClick={() => selectProduct(product.id)}
+								as={Link}
+								to={`/products/${product.id}`}
 								floated="right"
 								content="View"
 								color="blue"

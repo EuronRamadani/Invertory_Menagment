@@ -1,16 +1,12 @@
 import { observer } from "mobx-react-lite";
 import { SyntheticEvent, useState } from "react";
+import { Link } from "react-router-dom";
 import { Button, Item, Label, Segment } from "semantic-ui-react";
 import { useStore } from "../../../app/stores/store";
 
 export default observer(function SupplierList() {
 	const { supplierStore } = useStore();
-	const {
-		selectSupplier,
-		deleteSupplier,
-		suppliersByDate,
-		loading,
-	} = supplierStore;
+	const { deleteSupplier, suppliersByDate, loading } = supplierStore;
 	const [target, setTarget] = useState("");
 
 	function handleSupplierDelete(
@@ -36,7 +32,8 @@ export default observer(function SupplierList() {
 							<Item.Description>{supplier.description}</Item.Description>
 							<Item.Extra>
 								<Button
-									onClick={() => selectSupplier(supplier.id)}
+									as={Link}
+									to={`/suppliers/${supplier.id}`}
 									floated="right"
 									content="View"
 									color="blue"

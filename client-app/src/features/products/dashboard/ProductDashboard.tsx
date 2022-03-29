@@ -1,22 +1,32 @@
 import { observer } from "mobx-react-lite";
-import React from "react";
+import { useEffect } from "react";
+import { NavLink } from "react-router-dom";
 import { Button, Grid } from "semantic-ui-react";
-import { Product } from "../../../app/layout/models/product";
+import LoadingComponent from "../../../app/layout/LoadingComponent";
 import { useStore } from "../../../app/stores/store";
-import ProductDetails from "../details/ProductDetails";
-import ProductForm from "../form/ProductForm";
+// import ProductDetails from "../details/ProductDetails";
+// import ProductForm from "../form/ProductForm";
 import ProductList from "./ProductList";
 
 export default observer(function ProductDashboard() {
 	const { productStore } = useStore();
-	const { selectedProduct, editMode, openForm } = productStore;
+	const { loadProducts, productRegistry } = productStore;
+	// const { selectedProduct, editMode } = productStore;
+
+	useEffect(() => {
+		if (productRegistry.size <= 1) loadProducts();
+	}, [productRegistry.size, loadProducts]);
+
+	if (productStore.loadingInitial)
+		return <LoadingComponent content="Loading app " />;
 
 	return (
 		<>
 			<Button
 				// as={NavLink}
 				// to="/createActivity"
-				onClick={() => openForm()}
+				as={NavLink}
+				to="/createProduct"
 				positive
 				content="Create Product"
 			/>
@@ -24,10 +34,10 @@ export default observer(function ProductDashboard() {
 				<Grid.Column width="10">
 					<ProductList />
 				</Grid.Column>
-				<Grid.Column width="6">
+				{/* <Grid.Column width="6">
 					{selectedProduct && !editMode && <ProductDetails />}
 					{editMode && <ProductForm />}
-				</Grid.Column>
+				</Grid.Column> */}
 			</Grid>
 		</>
 	);

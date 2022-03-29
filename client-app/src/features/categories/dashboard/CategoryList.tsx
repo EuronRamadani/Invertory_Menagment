@@ -1,16 +1,12 @@
 import { observer } from "mobx-react-lite";
 import React, { SyntheticEvent, useState } from "react";
+import { Link } from "react-router-dom";
 import { Button, Item, Segment } from "semantic-ui-react";
 import { useStore } from "../../../app/stores/store";
 
 export default observer(function CategoryList() {
 	const { categoryStore } = useStore();
-	const {
-		deleteCategory,
-		categoriesByDate,
-		loading,
-		selectCategory,
-	} = categoryStore;
+	const { deleteCategory, categoriesByDate, loading } = categoryStore;
 	const [target, setTarget] = useState("");
 
 	function handleCategoryDelete(
@@ -36,7 +32,8 @@ export default observer(function CategoryList() {
 							<Item.Description>{category.description}</Item.Description>
 							<Item.Extra>
 								<Button
-									onClick={() => selectCategory(category.id)}
+									as={Link}
+									to={`/categories/${category.id}`}
 									floated="right"
 									content="View"
 									color="blue"

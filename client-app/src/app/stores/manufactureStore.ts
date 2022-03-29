@@ -1,7 +1,6 @@
 import { Manufacture } from "./../layout/models/manufacture";
 import { makeAutoObservable, runInAction } from "mobx";
 import agent from "../api/agent";
-import { v4 as uuid } from "uuid";
 
 export default class ManufactureStore {
 	manufactureRegistry = new Map<string, Manufacture>();
@@ -25,7 +24,7 @@ export default class ManufactureStore {
 			const manufactures = await agent.Manufactures.list();
 
 			manufactures.forEach((manufacture) => {
-				this.manufactureRegistry.set(manufacture.id, manufacture);
+				this.setManufacture(manufacture);
 			});
 			this.setLoadingInitial(false);
 		} catch (error) {
@@ -34,30 +33,43 @@ export default class ManufactureStore {
 		}
 	};
 
+	loadManufacture = async (id: string) => {
+		let manufacture = this.getManufacture(id);
+		if (manufacture) {
+			this.selectedManufacture = manufacture;
+			return manufacture;
+		} else {
+			this.loadingInitial = true;
+			try {
+				manufacture = await agent.Manufactures.details(id);
+				this.setManufacture(manufacture);
+				runInAction(() => {
+					this.selectedManufacture = manufacture;
+				});
+				this.setLoadingInitial(false);
+				return manufacture;
+			} catch (error) {
+				console.log(error);
+				this.setLoadingInitial(false);
+			}
+		}
+	};
+
+	private setManufacture = (manufacture: Manufacture) => {
+		this.manufactureRegistry.set(manufacture.id, manufacture);
+	};
+
+	private getManufacture = (id: string) => {
+		return this.manufactureRegistry.get(id);
+	};
+
 	setLoadingInitial = (state: boolean) => {
 		this.loadingInitial = state;
 	};
 
-	selectManufacture = (id: string) => {
-		this.selectedManufacture = this.manufactureRegistry.get(id);
-	};
-
-	cancelSelectedManufacture = () => {
-		this.selectedManufacture = undefined;
-	};
-
-	openForm = (id?: string) => {
-		id ? this.selectManufacture(id) : this.cancelSelectedManufacture();
-		this.editMode = true;
-	};
-
-	closeForm = () => {
-		this.editMode = false;
-	};
-
 	createManufacture = async (manufacture: Manufacture) => {
 		this.loading = true;
-		manufacture.id = uuid();
+
 		try {
 			await agent.Manufactures.create(manufacture);
 			runInAction(() => {
@@ -98,8 +110,6 @@ export default class ManufactureStore {
 			await agent.Manufactures.delete(id);
 			runInAction(() => {
 				this.manufactureRegistry.delete(id);
-				if (this.selectedManufacture?.id === id)
-					this.cancelSelectedManufacture();
 				this.loading = false;
 			});
 		} catch (error) {

@@ -1,31 +1,49 @@
 import { observer } from "mobx-react-lite";
-import { ChangeEvent, useState } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
+import { useHistory, useParams } from "react-router-dom";
 import { Button, Form, Segment } from "semantic-ui-react";
+import LoadingComponent from "../../../app/layout/LoadingComponent";
 import { useStore } from "../../../app/stores/store";
+import { v4 as uuid } from "uuid";
 
 export default observer(function ManufactureForm() {
+	const history = useHistory();
 	const { manufactureStore } = useStore();
 	const {
-		selectedManufacture,
-		closeForm,
 		createManufacture,
 		updateManufacture,
 		loading,
+		loadingInitial,
+		loadManufacture,
 	} = manufactureStore;
+	const { id } = useParams<{ id: string }>();
 
-	const initialState = selectedManufacture ?? {
+	const [manufacture, setManufacture] = useState({
 		id: "",
 		manufacturerName: "",
 		description: "",
 		countryOfOrigin: "",
-	};
+	});
 
-	const [manufacture, setManufacture] = useState(initialState);
+	useEffect(() => {
+		if (id)
+			loadManufacture(id).then((manufacture) => setManufacture(manufacture!));
+	}, [id, loadManufacture]);
 
 	function handlesSubmit() {
-		manufacture.id
-			? updateManufacture(manufacture)
-			: createManufacture(manufacture);
+		if (manufacture.id.length === 0) {
+			let newManufacture = {
+				...manufacture,
+				id: uuid(),
+			};
+			createManufacture(newManufacture).then(() =>
+				history.push(`/manufactures/${newManufacture.id}`)
+			);
+		} else {
+			updateManufacture(manufacture).then(() =>
+				history.push(`/manufactures/${manufacture.id}`)
+			);
+		}
 	}
 
 	function handleInputChange(
@@ -34,6 +52,9 @@ export default observer(function ManufactureForm() {
 		const { name, value } = event.target;
 		setManufacture({ ...manufacture, [name]: value });
 	}
+
+	if (loadingInitial)
+		return <LoadingComponent content="Loading manufacture ..." />;
 
 	return (
 		<Segment clearing>
@@ -63,12 +84,7 @@ export default observer(function ManufactureForm() {
 					type="submit"
 					content="Submit"
 				/>
-				<Button
-					onClick={closeForm}
-					floated="right"
-					type="button"
-					content="Cancel"
-				/>
+				<Button floated="right" type="button" content="Cancel" />
 			</Form>
 		</Segment>
 	);

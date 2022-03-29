@@ -1,28 +1,48 @@
 import { observer } from "mobx-react-lite";
-import { ChangeEvent, useState } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
+import { useHistory, useParams } from "react-router-dom";
 import { Button, Form, Segment } from "semantic-ui-react";
+import LoadingComponent from "../../../app/layout/LoadingComponent";
 import { useStore } from "../../../app/stores/store";
+import { v4 as uuid } from "uuid";
 
 export default observer(function SupplierForm() {
+	const history = useHistory();
 	const { supplierStore } = useStore();
 	const {
-		selectedSupplier,
 		createSupplier,
 		updateSupplier,
 		loading,
-		closeForm,
+		loadingInitial,
+		loadSupplier,
 	} = supplierStore;
-	const initialState = selectedSupplier ?? {
+	const { id } = useParams<{ id: string }>();
+
+	const [supplier, setSupplier] = useState({
 		id: "",
 		supplierName: "",
 		countryOfOrigin: "",
 		description: "",
-	};
+	});
 
-	const [supplier, setSupplier] = useState(initialState);
+	useEffect(() => {
+		if (id) loadSupplier(id).then((supplier) => setSupplier(supplier!));
+	}, [id, loadSupplier]);
 
 	function handlesSubmit() {
-		supplier.id ? updateSupplier(supplier) : createSupplier(supplier);
+		if (supplier.id.length === 0) {
+			let newSupplier = {
+				...supplier,
+				id: uuid(),
+			};
+			createSupplier(newSupplier).then(() =>
+				history.push(`/suppliers/${newSupplier.id}`)
+			);
+		} else {
+			updateSupplier(supplier).then(() =>
+				history.push(`/suppliers/${supplier.id}`)
+			);
+		}
 	}
 
 	function handleInputChange(
@@ -31,6 +51,10 @@ export default observer(function SupplierForm() {
 		const { name, value } = event.target;
 		setSupplier({ ...supplier, [name]: value });
 	}
+
+	if (loadingInitial)
+		return <LoadingComponent content="Loading supplier ..." />;
+
 	return (
 		<Segment clearing>
 			<Form onSubmit={handlesSubmit} autoComplete="off">
@@ -59,12 +83,7 @@ export default observer(function SupplierForm() {
 					type="submit"
 					content="Submit"
 				/>
-				<Button
-					onClick={closeForm}
-					floated="right"
-					type="button"
-					content="Cancel"
-				/>
+				<Button floated="right" type="button" content="Cancel" />
 			</Form>
 		</Segment>
 	);

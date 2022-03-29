@@ -1,7 +1,6 @@
 import { Supplier } from "./../layout/models/supplier";
 import { makeAutoObservable, runInAction } from "mobx";
 import agent from "../api/agent";
-import { v4 as uuid } from "uuid";
 
 export default class SupplierStore {
 	supplierRegistry = new Map<string, Supplier>();
@@ -34,30 +33,43 @@ export default class SupplierStore {
 		}
 	};
 
+	loadSupplier = async (id: string) => {
+		let supplier = this.getSupplier(id);
+		if (supplier) {
+			this.selectedSupplier = supplier;
+			return supplier;
+		} else {
+			this.loadingInitial = true;
+			try {
+				supplier = await agent.Suppliers.details(id);
+				this.setSupplier(supplier);
+				runInAction(() => {
+					this.selectedSupplier = supplier;
+				});
+				this.setLoadingInitial(false);
+				return supplier;
+			} catch (error) {
+				console.log(error);
+				this.setLoadingInitial(false);
+			}
+		}
+	};
+
+	private setSupplier = (supplier: Supplier) => {
+		this.supplierRegistry.set(supplier.id, supplier);
+	};
+
+	private getSupplier = (id: string) => {
+		return this.supplierRegistry.get(id);
+	};
+
 	setLoadingInitial = (state: boolean) => {
 		this.loadingInitial = state;
 	};
 
-	selectSupplier = (id: string) => {
-		this.selectedSupplier = this.supplierRegistry.get(id);
-	};
-
-	cancelSelectedSupplier = () => {
-		this.selectedSupplier = undefined;
-	};
-
-	openForm = (id?: string) => {
-		id ? this.selectSupplier(id) : this.cancelSelectedSupplier();
-		this.editMode = true;
-	};
-
-	closeForm = () => {
-		this.editMode = false;
-	};
-
 	createSupplier = async (supplier: Supplier) => {
 		this.loading = true;
-		supplier.id = uuid();
+
 		try {
 			await agent.Suppliers.create(supplier);
 			runInAction(() => {
@@ -98,7 +110,6 @@ export default class SupplierStore {
 			await agent.Suppliers.delete(id);
 			runInAction(() => {
 				this.supplierRegistry.delete(id);
-				if (this.selectedSupplier?.id === id) this.cancelSelectedSupplier();
 				this.loading = false;
 			});
 		} catch (error) {

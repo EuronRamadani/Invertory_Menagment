@@ -1,7 +1,6 @@
 import { Category } from "./../layout/models/category";
 import { makeAutoObservable, runInAction } from "mobx";
 import agent from "../api/agent";
-import { v4 as uuid } from "uuid";
 
 export default class CategoryStore {
 	categoryRegistry = new Map<string, Category>();
@@ -21,11 +20,11 @@ export default class CategoryStore {
 	}
 
 	loadCategories = async () => {
+		this.loadingInitial = true;
 		try {
 			const categories = await agent.Categories.list();
-
 			categories.forEach((category) => {
-				this.categoryRegistry.set(category.id, category);
+				this.setCategory(category);
 			});
 			this.setLoadingInitial(false);
 		} catch (error) {
@@ -34,30 +33,42 @@ export default class CategoryStore {
 		}
 	};
 
+	loadCategory = async (id: string) => {
+		let category = this.getCategory(id);
+		if (category) {
+			this.selectedCategory = category;
+			return category;
+		} else {
+			this.loadingInitial = true;
+			try {
+				category = await agent.Categories.details(id);
+				this.setCategory(category);
+				runInAction(() => {
+					this.selectedCategory = category;
+				});
+				this.setLoadingInitial(false);
+				return category;
+			} catch (error) {
+				console.log(error);
+				this.setLoadingInitial(false);
+			}
+		}
+	};
+
+	private setCategory = (category: Category) => {
+		this.categoryRegistry.set(category.id, category);
+	};
+
+	private getCategory = (id: string) => {
+		return this.categoryRegistry.get(id);
+	};
+
 	setLoadingInitial = (state: boolean) => {
 		this.loadingInitial = state;
 	};
 
-	selectCategory = (id: string) => {
-		this.selectedCategory = this.categoryRegistry.get(id);
-	};
-
-	cancelSelectedCategory = () => {
-		this.selectedCategory = undefined;
-	};
-
-	openForm = (id?: string) => {
-		id ? this.selectCategory(id) : this.cancelSelectedCategory();
-		this.editMode = true;
-	};
-
-	closeForm = () => {
-		this.editMode = false;
-	};
-
 	createCategory = async (category: Category) => {
 		this.loading = true;
-		category.id = uuid();
 		try {
 			await agent.Categories.create(category);
 			runInAction(() => {
@@ -98,7 +109,6 @@ export default class CategoryStore {
 			await agent.Categories.delete(id);
 			runInAction(() => {
 				this.categoryRegistry.delete(id);
-				if (this.selectedCategory?.id === id) this.cancelSelectedCategory();
 				this.loading = false;
 			});
 		} catch (error) {

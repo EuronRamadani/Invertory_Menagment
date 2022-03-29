@@ -1,21 +1,29 @@
+import { observer } from "mobx-react-lite";
+import { useEffect } from "react";
+import { Link, useParams } from "react-router-dom";
 import { Button, Card, Image } from "semantic-ui-react";
 import LoadingComponent from "../../../app/layout/LoadingComponent";
 import { useStore } from "../../../app/stores/store";
 
-export default function ManufactureDetails() {
+export default observer(function ManufactureDetails() {
 	const { manufactureStore } = useStore();
 
 	const {
 		selectedManufacture: manufacture,
-		openForm,
-		cancelSelectedManufacture,
+		loadManufacture,
+		loadingInitial,
 	} = manufactureStore;
+	const { id } = useParams<{ id: string }>();
 
-	if (!manufacture) return <LoadingComponent content={""} />;
+	useEffect(() => {
+		if (id) loadManufacture(id);
+	}, [id, loadManufacture]);
+
+	if (loadingInitial || !manufacture) return <LoadingComponent content={""} />;
 
 	return (
 		<Card fluid>
-			<Image src={`/assets/categoryImages/drinks.jpg`} />
+			<Image />
 			<Card.Content>
 				<Card.Header>{manufacture.manufacturerName}</Card.Header>
 				{/* <Card.Meta>
@@ -29,13 +37,15 @@ export default function ManufactureDetails() {
 			<Card.Content extra>
 				<Button.Group>
 					<Button
-						onClick={() => openForm(manufacture.id)}
+						as={Link}
+						to={`/manageManufacture/${manufacture.id}`}
 						basic
 						color="blue"
 						content="Edit"
 					/>
 					<Button
-						onClick={cancelSelectedManufacture}
+						as={Link}
+						to="/manufactures"
 						basic
 						color="grey"
 						content="Cancel"
@@ -44,4 +54,4 @@ export default function ManufactureDetails() {
 			</Card.Content>
 		</Card>
 	);
-}
+});

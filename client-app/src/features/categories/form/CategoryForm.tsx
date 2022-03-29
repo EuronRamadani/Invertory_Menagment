@@ -1,28 +1,47 @@
 import { observer } from "mobx-react-lite";
-import { ChangeEvent, useState } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
+import { Link, useHistory, useParams } from "react-router-dom";
 import { Button, Form, Segment } from "semantic-ui-react";
+import LoadingComponent from "../../../app/layout/LoadingComponent";
 import { useStore } from "../../../app/stores/store";
+import { v4 as uuid } from "uuid";
 
 export default observer(function CategoryForm() {
+	const history = useHistory();
 	const { categoryStore } = useStore();
 	const {
-		selectedCategory,
-		closeForm,
 		createCategory,
 		updateCategory,
 		loading,
+		loadingInitial,
+		loadCategory,
 	} = categoryStore;
+	const { id } = useParams<{ id: string }>();
 
-	const initialState = selectedCategory ?? {
+	const [category, setCategory] = useState({
 		id: "",
 		categoryName: "",
 		description: "",
-	};
+	});
 
-	const [category, setCategory] = useState(initialState);
+	useEffect(() => {
+		if (id) loadCategory(id).then((category) => setCategory(category!));
+	}, [id, loadCategory]);
 
 	function handlesSubmit() {
-		category.id ? updateCategory(category) : createCategory(category);
+		if (category.id.length === 0) {
+			let newCategory = {
+				...category,
+				id: uuid(),
+			};
+			createCategory(newCategory).then(() =>
+				history.push(`/categories/${newCategory.id}`)
+			);
+		} else {
+			updateCategory(category).then(() =>
+				history.push(`/categories/${category.id}`)
+			);
+		}
 	}
 
 	function handleInputChange(
@@ -31,6 +50,9 @@ export default observer(function CategoryForm() {
 		const { name, value } = event.target;
 		setCategory({ ...category, [name]: value });
 	}
+
+	if (loadingInitial)
+		return <LoadingComponent content="Loading category ..." />;
 
 	return (
 		<Segment clearing>
@@ -55,7 +77,8 @@ export default observer(function CategoryForm() {
 					content="Submit"
 				/>
 				<Button
-					onClick={closeForm}
+					as={Link}
+					to="/categories"
 					floated="right"
 					type="button"
 					content="Cancel"

@@ -1,16 +1,24 @@
+import { observer } from "mobx-react-lite";
+import { useEffect } from "react";
+import { Link, useParams } from "react-router-dom";
 import { Button, Card, Image } from "semantic-ui-react";
 import LoadingComponent from "../../../app/layout/LoadingComponent";
 import { useStore } from "../../../app/stores/store";
 
-export default function SupplierDetails() {
+export default observer(function SupplierDetails() {
 	const { supplierStore } = useStore();
 	const {
 		selectedSupplier: supplier,
-		cancelSelectedSupplier,
-		openForm,
+		loadSupplier,
+		loadingInitial,
 	} = supplierStore;
+	const { id } = useParams<{ id: string }>();
 
-	if (!supplier) return <LoadingComponent content={""} />;
+	useEffect(() => {
+		if (id) loadSupplier(id);
+	}, [id, loadSupplier]);
+
+	if (loadingInitial || !supplier) return <LoadingComponent content={""} />;
 
 	return (
 		<Card fluid>
@@ -28,13 +36,15 @@ export default function SupplierDetails() {
 			<Card.Content extra>
 				<Button.Group>
 					<Button
-						onClick={() => openForm(supplier.id)}
+						as={Link}
+						to={`/manageSupplier/${supplier.id}`}
 						basic
 						color="blue"
 						content="Edit"
 					/>
 					<Button
-						onClick={cancelSelectedSupplier}
+						as={Link}
+						to="/suppliers"
 						basic
 						color="grey"
 						content="Cancel"
@@ -43,4 +53,4 @@ export default function SupplierDetails() {
 			</Card.Content>
 		</Card>
 	);
-}
+});

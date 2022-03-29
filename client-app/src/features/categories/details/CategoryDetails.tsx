@@ -1,18 +1,24 @@
-import React from "react";
+import { observer } from "mobx-react-lite";
+import React, { useEffect } from "react";
+import { Link, useParams } from "react-router-dom";
 import { Button, Card, Image } from "semantic-ui-react";
 import LoadingComponent from "../../../app/layout/LoadingComponent";
 import { useStore } from "../../../app/stores/store";
 
-export default function CategoryDetails() {
+export default observer(function CategoryDetails() {
 	const { categoryStore } = useStore();
-
 	const {
 		selectedCategory: category,
-		openForm,
-		cancelSelectedCategory,
+		loadCategory,
+		loadingInitial,
 	} = categoryStore;
+	const { id } = useParams<{ id: string }>();
 
-	if (!category) return <LoadingComponent content={""} />;
+	useEffect(() => {
+		if (id) loadCategory(id);
+	}, [id, loadCategory]);
+
+	if (loadingInitial || !category) return <LoadingComponent content={""} />;
 
 	return (
 		<Card fluid>
@@ -27,13 +33,15 @@ export default function CategoryDetails() {
 			<Card.Content extra>
 				<Button.Group>
 					<Button
-						onClick={() => openForm(category.id)}
+						as={Link}
+						to={`/manageCategory/${category.id}`}
 						basic
 						color="blue"
 						content="Edit"
 					/>
 					<Button
-						onClick={cancelSelectedCategory}
+						as={Link}
+						to="/categories"
 						basic
 						color="grey"
 						content="Cancel"
@@ -42,4 +50,4 @@ export default function CategoryDetails() {
 			</Card.Content>
 		</Card>
 	);
-}
+});

@@ -1,16 +1,12 @@
 import { observer } from "mobx-react-lite";
 import { SyntheticEvent, useState } from "react";
+import { Link } from "react-router-dom";
 import { Button, Item, Label, Segment } from "semantic-ui-react";
 import { useStore } from "../../../app/stores/store";
 
 export default observer(function ManufactureList() {
 	const { manufactureStore } = useStore();
-	const {
-		deleteManufacture,
-		manufacturesByDate,
-		loading,
-		selectManufacture,
-	} = manufactureStore;
+	const { deleteManufacture, manufacturesByDate, loading } = manufactureStore;
 
 	const [target, setTarget] = useState("");
 
@@ -36,7 +32,8 @@ export default observer(function ManufactureList() {
 							<Item.Description>{manufacture.description}</Item.Description>
 							<Item.Extra>
 								<Button
-									onClick={() => selectManufacture(manufacture.id)}
+									as={Link}
+									to={`/manufactures/${manufacture.id}`}
 									floated="right"
 									content="View"
 									color="blue"

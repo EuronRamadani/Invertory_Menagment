@@ -21,7 +21,7 @@ export default observer(function ProductDetails() {
 	if (loadingInitial || !product) return <LoadingComponent content={""} />;
 	return (
 		<Card fluid>
-			<Image src={`/assets/categoryImages/drinks.jpg`} />
+			<Image src={`/categoryImages/drinks.jpg`} />
 			<Card.Content>
 				<Card.Header>{product.productName}</Card.Header>
 				<Card.Meta>

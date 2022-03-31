@@ -53,10 +53,7 @@ const Products = {
 	list: () => requests.get<Product[]>("/products"),
 	details: (id: string) => requests.get<Product>(`/products/${id}`),
 
-	create: (product: Product) =>
-		requests
-			.post<void>("/products", product)
-			.catch((err) => console.log(`err ${err}`)),
+	create: (product: Product) => requests.post<void>("/products", product),
 	update: (product: Product) =>
 		requests.put<void>(`/products/${product.id}`, product),
 	delete: (id: string) => requests.delete<void>(`/products/${id}`),

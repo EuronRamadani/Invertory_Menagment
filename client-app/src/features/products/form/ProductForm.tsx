@@ -23,8 +23,8 @@ export default observer(function ProductForm() {
 		productName: "",
 		sku: "",
 		description: "",
-		quantity: "",
-		price: "",
+		quantity: 0,
+		price: 0,
 		dateCreated: "",
 		expirationDate: "",
 	});

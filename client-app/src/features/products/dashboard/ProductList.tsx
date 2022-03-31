@@ -1,7 +1,7 @@
 import { observer } from "mobx-react-lite";
 import { SyntheticEvent, useState } from "react";
 import { Link } from "react-router-dom";
-import { Button, Card, Item } from "semantic-ui-react";
+import { Button, Card, Image, Item } from "semantic-ui-react";
 import { useStore } from "../../../app/stores/store";
 
 export default observer(function ProductList() {
@@ -20,11 +20,7 @@ export default observer(function ProductList() {
 		<Card fluid>
 			{productsByDate.map((product) => (
 				<Item.Group key={product.id}>
-					{/* <Image
-						src="https://react.semantic-ui.com/images/avatar/large/matthew.png"
-						wrapped
-						ui={false}
-					/> */}
+					<Image src="/categoryImages/drinks.jpg" wrapped ui={false} />
 					<Card.Content>
 						<Card.Header>{product.productName}</Card.Header>
 						<Card.Header>{product.sku}</Card.Header>

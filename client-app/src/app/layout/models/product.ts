@@ -3,8 +3,8 @@ export interface Product {
 	productName: string;
 	sku: string;
 	description: string;
-	quantity: string;
-	price: string;
+	quantity: number;
+	price: number;
 	dateCreated: string;
 	expirationDate: string;
 }

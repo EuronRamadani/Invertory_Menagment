@@ -5,6 +5,8 @@ export interface Product {
 	description: string;
 	quantity: number;
 	price: number;
-	dateCreated: string;
-	expirationDate: string;
+	dateCreated: Date | null;
+	expirationDate: Date | null;
+	categoryName: string;
+	manufactureName: string;
 }

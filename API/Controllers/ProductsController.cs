@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Application.Products;
 using Domain;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Persistence;
@@ -12,7 +13,7 @@ namespace API.Controllers
 {
     public class ProductsController : BaseApiController
     {
-
+        [AllowAnonymous]
         [HttpGet]
         public async Task<ActionResult<List<Product>>> GetProducts()
         {

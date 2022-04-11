@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { Fragment, useEffect } from "react";
 import { Button, Grid, Menu } from "semantic-ui-react";
 import CategoryList from "./CategoryList";
 // import CategoryDetails from "../details/CategoryDetails";
@@ -12,26 +12,34 @@ export default observer(function CategoryDashboard() {
 	const { categoryStore } = useStore();
 
 	const { loadCategories, categoryRegistry } = categoryStore;
+	const {
+		userStore: { user },
+	} = useStore();
 
 	useEffect(() => {
 		if (categoryRegistry.size <= 1) loadCategories();
 	}, [categoryRegistry.size, loadCategories]);
 
 	if (categoryStore.loadingInitial)
-		return <LoadingComponent content="Loading app " />;
+		return <LoadingComponent content="Loading categories ... " />;
 
 	return (
 		<>
 			<Menu.Item>
-				<Button
-					as={NavLink}
-					to="/createCategory"
-					positive
-					content="Create Category"
-				/>
+				{user?.isAdmin ? (
+					<Button
+						style={{ margin: "0 0 10px 150px" }}
+						as={NavLink}
+						to="/createCategory"
+						positive
+						content="Create Category"
+					/>
+				) : (
+					<Fragment />
+				)}
 			</Menu.Item>
 			<Grid>
-				<Grid.Column width="10">
+				<Grid.Column width="10" style={{ marginLeft: "150px" }}>
 					<CategoryList />
 				</Grid.Column>
 				{/* <Grid.Column width="6">

@@ -7,7 +7,7 @@ export default class ManufactureStore {
 	selectedManufacture: Manufacture | undefined = undefined;
 	editMode = false;
 	loading = false;
-	loadingInitial = true;
+	loadingInitial = false;
 
 	constructor() {
 		makeAutoObservable(this);

@@ -7,7 +7,7 @@ export default class SupplierStore {
 	selectedSupplier: Supplier | undefined = undefined;
 	editMode = false;
 	loading = false;
-	loadingInitial = true;
+	loadingInitial = false;
 
 	constructor() {
 		makeAutoObservable(this);

@@ -1,5 +1,5 @@
 import { observer } from "mobx-react-lite";
-import React, { useEffect } from "react";
+import React, { Fragment, useEffect } from "react";
 import { Link, useParams } from "react-router-dom";
 import { Button, Card, Image } from "semantic-ui-react";
 import LoadingComponent from "../../../app/layout/LoadingComponent";
@@ -13,6 +13,9 @@ export default observer(function CategoryDetails() {
 		loadingInitial,
 	} = categoryStore;
 	const { id } = useParams<{ id: string }>();
+	const {
+		userStore: { user },
+	} = useStore();
 
 	useEffect(() => {
 		if (id) loadCategory(id);
@@ -21,25 +24,28 @@ export default observer(function CategoryDetails() {
 	if (loadingInitial || !category) return <LoadingComponent content={""} />;
 
 	return (
-		<Card fluid>
-			<Image src={`/assets/categoryImages/drinks.jpg`} />
+		<Card style={{ width: "70%", marginLeft: "10%" }}>
+			<Image src={`/categoryImages/${category.categoryName}.jpg`} />
 			<Card.Content>
 				<Card.Header>{category.categoryName}</Card.Header>
-				{/* <Card.Meta>
-					<span className="date">Joined in 2015</span>
-				</Card.Meta> */}
-				<Card.Description>{category.description}</Card.Description>
+				<Card.Description>Description: {category.description}</Card.Description>
 			</Card.Content>
 			<Card.Content extra>
 				<Button.Group>
+					{user?.isAdmin ? (
+						<Button
+							fluid
+							as={Link}
+							to={`/manageCategory/${category.id}`}
+							basic
+							color="blue"
+							content="Edit"
+						/>
+					) : (
+						<Fragment />
+					)}
 					<Button
-						as={Link}
-						to={`/manageCategory/${category.id}`}
-						basic
-						color="blue"
-						content="Edit"
-					/>
-					<Button
+						fluid
 						as={Link}
 						to="/categories"
 						basic

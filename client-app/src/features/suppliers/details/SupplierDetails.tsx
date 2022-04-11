@@ -1,5 +1,5 @@
 import { observer } from "mobx-react-lite";
-import { useEffect } from "react";
+import { Fragment, useEffect } from "react";
 import { Link, useParams } from "react-router-dom";
 import { Button, Card, Image } from "semantic-ui-react";
 import LoadingComponent from "../../../app/layout/LoadingComponent";
@@ -13,6 +13,9 @@ export default observer(function SupplierDetails() {
 		loadingInitial,
 	} = supplierStore;
 	const { id } = useParams<{ id: string }>();
+	const {
+		userStore: { user },
+	} = useStore();
 
 	useEffect(() => {
 		if (id) loadSupplier(id);
@@ -21,28 +24,34 @@ export default observer(function SupplierDetails() {
 	if (loadingInitial || !supplier) return <LoadingComponent content={""} />;
 
 	return (
-		<Card fluid>
-			<Image src={`/assets/categoryImages/drinks.jpg`} />
+		<Card style={{ width: "70%", marginLeft: "10%" }}>
+			<Image src={`/categoryImages/${supplier.supplierName}.jpg`} />
 			<Card.Content>
 				<Card.Header>{supplier.supplierName}</Card.Header>
 				{/* <Card.Meta>
 					<span className="date">Joined in 2015</span>
 				</Card.Meta> */}
 				<Card.Description>
-					{supplier.description}
-					<div>{supplier.countryOfOrigin}</div>
+					Description: {supplier.description}
+					<div>Country of Origin: {supplier.countryOfOrigin}</div>
 				</Card.Description>
 			</Card.Content>
 			<Card.Content extra>
 				<Button.Group>
+					{user?.isAdmin ? (
+						<Button
+							fluid
+							as={Link}
+							to={`/manageSupplier/${supplier.id}`}
+							basic
+							color="blue"
+							content="Edit"
+						/>
+					) : (
+						<Fragment />
+					)}
 					<Button
-						as={Link}
-						to={`/manageSupplier/${supplier.id}`}
-						basic
-						color="blue"
-						content="Edit"
-					/>
-					<Button
+						fluid
 						as={Link}
 						to="/suppliers"
 						basic

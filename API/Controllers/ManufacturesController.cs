@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Application.Manufactures;
 using Domain;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Persistence;
@@ -12,7 +13,7 @@ namespace API.Controllers
 {
     public class ManufacturesController : BaseApiController
     {
-
+        [AllowAnonymous]
         [HttpGet]
         public async Task<ActionResult<List<Manufacture>>> GetManufactures()
         {

@@ -50,18 +50,21 @@ namespace API.Controllers
         {
             if (await _userManager.Users.AnyAsync(x => x.Email == registerDto.Email))
             {
-                return BadRequest("Email taken");
+                ModelState.AddModelError("email", "Email taken");
+                return ValidationProblem();
             }
             if (await _userManager.Users.AnyAsync(x => x.UserName == registerDto.Username))
             {
-                return BadRequest("Username taken");
+                ModelState.AddModelError("username", "Username taken");
+                return ValidationProblem();
             }
 
             var user = new AppUser
             {
                 DisplayName = registerDto.DisplayName,
                 Email = registerDto.Email,
-                UserName = registerDto.Username
+                UserName = registerDto.Username,
+                IsAdmin = false
             };
 
             var result = await _userManager.CreateAsync(user, registerDto.Password);
@@ -74,7 +77,7 @@ namespace API.Controllers
             return BadRequest("Problem registering user");
         }
 
-        [Authorize]
+
         [HttpGet]
         public async Task<ActionResult<UserDto>> GetCurrentUser()
         {
@@ -90,7 +93,8 @@ namespace API.Controllers
                 DisplayName = user.DisplayName,
                 Image = null,
                 Token = _tokenServices.CreateToken(user),
-                Username = user.UserName
+                Username = user.UserName,
+                IsAdmin = user.IsAdmin
             };
         }
     }

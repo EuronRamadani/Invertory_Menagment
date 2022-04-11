@@ -1,5 +1,5 @@
 import { observer } from "mobx-react-lite";
-import { useEffect } from "react";
+import { Fragment, useEffect } from "react";
 import { Link, useParams } from "react-router-dom";
 import { Button, Card, Image } from "semantic-ui-react";
 import LoadingComponent from "../../../app/layout/LoadingComponent";
@@ -15,6 +15,10 @@ export default observer(function ManufactureDetails() {
 	} = manufactureStore;
 	const { id } = useParams<{ id: string }>();
 
+	const {
+		userStore: { user },
+	} = useStore();
+
 	useEffect(() => {
 		if (id) loadManufacture(id);
 	}, [id, loadManufacture]);
@@ -22,28 +26,34 @@ export default observer(function ManufactureDetails() {
 	if (loadingInitial || !manufacture) return <LoadingComponent content={""} />;
 
 	return (
-		<Card fluid>
-			<Image />
+		<Card style={{ width: "70%", marginLeft: "10%" }}>
+			<Image src={`/categoryImages/${manufacture.manufacturerName}.jpg`} />
 			<Card.Content>
 				<Card.Header>{manufacture.manufacturerName}</Card.Header>
 				{/* <Card.Meta>
 					<span className="date">Joined in 2015</span>
 				</Card.Meta> */}
 				<Card.Description>
-					{manufacture.description}
-					<div>{manufacture.countryOfOrigin}</div>
+					Description: {manufacture.description}
+					<div>Country of origin: {manufacture.countryOfOrigin}</div>
 				</Card.Description>
 			</Card.Content>
 			<Card.Content extra>
 				<Button.Group>
+					{user?.isAdmin ? (
+						<Button
+							fluid
+							as={Link}
+							to={`/manageManufacture/${manufacture.id}`}
+							basic
+							color="blue"
+							content="Edit"
+						/>
+					) : (
+						<Fragment />
+					)}
 					<Button
-						as={Link}
-						to={`/manageManufacture/${manufacture.id}`}
-						basic
-						color="blue"
-						content="Edit"
-					/>
-					<Button
+						fluid
 						as={Link}
 						to="/manufactures"
 						basic

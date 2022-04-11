@@ -1,5 +1,5 @@
 import { observer } from "mobx-react-lite";
-import { SyntheticEvent, useState } from "react";
+import { Fragment, SyntheticEvent, useState } from "react";
 import { Link } from "react-router-dom";
 import { Button, Item, Label, Segment } from "semantic-ui-react";
 import { useStore } from "../../../app/stores/store";
@@ -7,6 +7,9 @@ import { useStore } from "../../../app/stores/store";
 export default observer(function ManufactureList() {
 	const { manufactureStore } = useStore();
 	const { deleteManufacture, manufacturesByDate, loading } = manufactureStore;
+	const {
+		userStore: { user },
+	} = useStore();
 
 	const [target, setTarget] = useState("");
 
@@ -24,7 +27,7 @@ export default observer(function ManufactureList() {
 					<Item key={manufacture.id}>
 						<Item.Image
 							size="small"
-							src="https://react.semantic-ui.com/images/wireframe/image.png"
+							src={`/categoryImages/${manufacture.manufacturerName}.jpg`}
 						/>
 
 						<Item.Content>
@@ -38,14 +41,18 @@ export default observer(function ManufactureList() {
 									content="View"
 									color="blue"
 								/>
-								<Button
-									name={manufacture.id}
-									loading={loading && target === manufacture.id}
-									onClick={(e) => handleManufactureDelete(e, manufacture.id)}
-									floated="right"
-									content="Delete"
-									color="red"
-								/>
+								{user?.isAdmin ? (
+									<Button
+										name={manufacture.id}
+										loading={loading && target === manufacture.id}
+										onClick={(e) => handleManufactureDelete(e, manufacture.id)}
+										floated="right"
+										content="Delete"
+										color="red"
+									/>
+								) : (
+									<Fragment />
+								)}
 								<Label basic content={manufacture.countryOfOrigin} />
 							</Item.Extra>
 						</Item.Content>

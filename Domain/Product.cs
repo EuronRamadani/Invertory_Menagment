@@ -16,6 +16,11 @@ namespace Domain
         public double Price { get; set; }
         public DateTime? DateCreated { get; set; } = DateTime.Now;
         public DateTime? ExpirationDate { get; set; }
+        public string CategoryName { get; set; }
+        public string ManufactureName { get; set; }
         // public ProductStatus Status { get; set; } = ProductStatus.Pending;
+
+
+        public ICollection<Product_Category> Product_Categories { get; set; }
     }
 }

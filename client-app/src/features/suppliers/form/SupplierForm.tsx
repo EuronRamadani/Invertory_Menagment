@@ -1,10 +1,15 @@
 import { observer } from "mobx-react-lite";
 import { ChangeEvent, useEffect, useState } from "react";
 import { useHistory, useParams } from "react-router-dom";
-import { Button, Form, Segment } from "semantic-ui-react";
+import { Button, Segment } from "semantic-ui-react";
 import LoadingComponent from "../../../app/layout/LoadingComponent";
 import { useStore } from "../../../app/stores/store";
 import { v4 as uuid } from "uuid";
+import { Formik, Form, Field } from "formik";
+import * as Yup from "yup";
+import MyTextInput from "../../../app/common/form/MyTextInput";
+import MyTextArea from "../../../app/common/form/MyTextArea";
+import { Supplier } from "../../../app/layout/models/supplier";
 
 export default observer(function SupplierForm() {
 	const history = useHistory();
@@ -29,7 +34,13 @@ export default observer(function SupplierForm() {
 		if (id) loadSupplier(id).then((supplier) => setSupplier(supplier!));
 	}, [id, loadSupplier]);
 
-	function handlesSubmit() {
+	const validationSchema = Yup.object({
+		supplierName: Yup.string().required("Suppllier name is required"),
+		description: Yup.string().required(),
+		countryOfOrigin: Yup.string().required(),
+	});
+
+	function handleFormSubmit(supplier: Supplier) {
 		if (supplier.id.length === 0) {
 			let newSupplier = {
 				...supplier,
@@ -45,46 +56,44 @@ export default observer(function SupplierForm() {
 		}
 	}
 
-	function handleInputChange(
-		event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-	) {
-		const { name, value } = event.target;
-		setSupplier({ ...supplier, [name]: value });
-	}
+	// function handleInputChange(
+	// 	event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+	// ) {
+	// 	const { name, value } = event.target;
+	// 	setSupplier({ ...supplier, [name]: value });
+	// }
 
 	if (loadingInitial)
 		return <LoadingComponent content="Loading supplier ..." />;
 
 	return (
 		<Segment clearing>
-			<Form onSubmit={handlesSubmit} autoComplete="off">
-				<Form.Input
-					placeholder="Supplier Name"
-					value={supplier.supplierName}
-					name="supplierName"
-					onChange={handleInputChange}
-				/>
-				<Form.TextArea
-					placeholder="Description"
-					value={supplier.description}
-					name="description"
-					onChange={handleInputChange}
-				/>
-				<Form.Input
-					placeholder="Country of Origin"
-					value={supplier.countryOfOrigin}
-					name="countryOfOrigin"
-					onChange={handleInputChange}
-				/>
-				<Button
-					loading={loading}
-					floated="right"
-					positive
-					type="submit"
-					content="Submit"
-				/>
-				<Button floated="right" type="button" content="Cancel" />
-			</Form>
+			<Formik
+				validationSchema={validationSchema}
+				enableReinitialize
+				initialValues={supplier}
+				onSubmit={(values) => handleFormSubmit(values)}
+			>
+				{({ handleSubmit, isValid, isSubmitting, dirty }) => (
+					<Form className="ui form" onSubmit={handleSubmit} autoComplete="off">
+						<MyTextInput placeholder="Supplier Name" name="supplierName" />
+						<MyTextArea rows={3} placeholder="Description" name="description" />
+						<MyTextInput
+							placeholder="Country of Origin"
+							name="countryOfOrigin"
+						/>
+						<Button
+							disabled={isSubmitting || !dirty || !isValid}
+							loading={loading}
+							floated="right"
+							positive
+							type="submit"
+							content="Submit"
+						/>
+						<Button floated="right" type="button" content="Cancel" />
+					</Form>
+				)}
+			</Formik>
 		</Segment>
 	);
 });

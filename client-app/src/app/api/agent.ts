@@ -1,8 +1,11 @@
+import { store } from "./../stores/store";
+import { UserFormValues } from "./../layout/models/User";
 import { Category } from "./../layout/models/category";
 import axios, { AxiosResponse } from "axios";
 import { Manufacture } from "../layout/models/manufacture";
 import { Product } from "../layout/models/product";
 import { Supplier } from "../layout/models/supplier";
+import { User } from "../layout/models/User";
 
 const sleep = (delay: number) => {
 	return new Promise((resolve) => {
@@ -11,6 +14,12 @@ const sleep = (delay: number) => {
 };
 
 axios.defaults.baseURL = "http://localhost:5000/api";
+
+axios.interceptors.request.use((config: any) => {
+	const token = store.commonStore.token;
+	if (token) config.headers.Authorization = `Bearer ${token}`;
+	return config;
+});
 
 axios.interceptors.response.use(async (response) => {
 	try {
@@ -67,11 +76,19 @@ const Suppliers = {
 	delete: (id: string) => requests.delete<void>(`/suppliers/${id}`),
 };
 
+const Account = {
+	current: () => requests.get<User>("/account"),
+	login: (user: UserFormValues) => requests.post<User>("/account/login", user),
+	register: (user: UserFormValues) =>
+		requests.post<User>("/account/register", user),
+};
+
 const agent = {
 	Categories,
 	Manufactures,
 	Products,
 	Suppliers,
+	Account,
 };
 
 export default agent;

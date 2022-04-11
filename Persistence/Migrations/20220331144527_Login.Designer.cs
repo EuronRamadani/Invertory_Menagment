@@ -251,6 +251,7 @@ namespace Persistence.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
                 {
+                    
                     b.Property<string>("LoginProvider")
                         .HasColumnType("TEXT");
 

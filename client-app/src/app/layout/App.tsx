@@ -16,12 +16,30 @@ import CategoryDetails from "../../features/categories/details/CategoryDetails";
 import ManufactureDetails from "../../features/manufactures/details/ManufactureDetails";
 import ProductDetails from "../../features/products/details/ProductDetails";
 import SupplierDetails from "../../features/suppliers/details/SupplierDetails";
+import LoginForm from "../../features/users/LoginForm";
+import { useStore } from "../stores/store";
+import { useEffect } from "react";
+import LoadingComponent from "./LoadingComponent";
+import ModalContainer from "../api/common/ModalContainer";
 
 function App() {
 	const location = useLocation();
+	const { commonStore, userStore } = useStore();
+
+	useEffect(() => {
+		if (commonStore.token) {
+			userStore.getUser().finally(() => commonStore.setAppLoaded());
+		} else {
+			commonStore.setAppLoaded();
+		}
+	}, [commonStore, userStore]);
+
+	if (!commonStore.appLoaded)
+		return <LoadingComponent content="Loading app ..." />;
 
 	return (
 		<>
+			<ModalContainer />
 			<Route exact path="/" component={HomePage} />
 			<Route
 				path={"/(.+)"}
@@ -62,6 +80,9 @@ function App() {
 								path={["/createSupplier", "/manageSupplier/:id"]}
 								component={SupplierForm}
 							/>
+
+							{/*LoginForm*/}
+							<Route path="/login" component={LoginForm} />
 						</Container>
 					</>
 				)}

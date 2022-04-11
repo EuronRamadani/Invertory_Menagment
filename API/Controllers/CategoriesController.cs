@@ -10,7 +10,8 @@ namespace API.Controllers
 {
     public class CategoriesController : BaseApiController
     {
-
+        [AllowAnonymous]
+        // [Authorize]
         [HttpGet]
         public async Task<ActionResult<List<Category>>> GetCategories()
         {
@@ -23,8 +24,8 @@ namespace API.Controllers
             return await Mediator.Send(new Details.Query { Id = id });
         }
 
+        // [Authorize(Roles = "1")]
         [HttpPost]
-
         public async Task<IActionResult> CreateCategory(Category category)
         {
             return Ok(await Mediator.Send(new Create.Command { Category = category }));

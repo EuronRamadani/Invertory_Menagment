@@ -1,13 +1,14 @@
 import { Product } from "./../layout/models/product";
 import { makeAutoObservable, runInAction } from "mobx";
 import agent from "../api/agent";
+// import { format } from "date-fns";
 
 export default class ProductStore {
 	productRegistry = new Map<string, Product>();
 	selectedProduct: Product | undefined = undefined;
 	editMode = false;
 	loading = false;
-	loadingInitial = true;
+	loadingInitial = false;
 
 	constructor() {
 		makeAutoObservable(this);
@@ -56,6 +57,8 @@ export default class ProductStore {
 	};
 
 	private setProduct = (product: Product) => {
+		product.dateCreated = new Date(product.dateCreated!);
+		product.expirationDate = new Date(product.expirationDate!);
 		this.productRegistry.set(product.id, product);
 	};
 

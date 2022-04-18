@@ -153,4 +153,3 @@ C:\Users\Notebook\Desktop\Invertory_Menagment\API\obj\Debug\net5.0\ref\API.dll
 C:\Users\Notebook\Desktop\Invertory_Menagment\API\obj\Debug\net5.0\API.pdb
 C:\Users\Notebook\Desktop\Invertory_Menagment\API\obj\Debug\net5.0\API.genruntimeconfig.cache
 C:\Users\Notebook\Desktop\Invertory_Menagment\API\obj\Debug\net5.0\API.csproj.CopyComplete
-C:\Users\Notebook\Desktop\laboratory1\Invertory_Menagment\API\obj\Debug\net5.0\API.csproj.CopyComplete

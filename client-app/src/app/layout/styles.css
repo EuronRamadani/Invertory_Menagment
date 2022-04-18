@@ -45,3 +45,60 @@ body {
 }
 
 /*end home page styles*/
+
+/*Footer*/
+
+.footer {
+	/* padding: 50px; */
+
+	position: fixed;
+	height: 50px;
+	/* background-color: red; */
+	bottom: 0px;
+	left: 0px;
+	right: 0px;
+	margin-bottom: 0px;
+	background-image: linear-gradient(135deg,
+		rgb(24, 115, 65) 0%,
+		rgb(33, 138, 174) 69%,
+		rgb(32, 172, 142) 89%)
+		
+}
+
+
+.footer hr {
+	width: 85%;
+	align-self: center;
+	margin: 30px;
+}
+
+.footer-ul {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: center;
+	margin-top: 50px;
+}
+
+.footer-ul-links {
+	/* display: flex; */
+	justify-content: space-around;
+	margin-top: 50px;
+}
+
+.footer ul li a img {
+	width: 25px;
+	height: 25px;
+}
+
+.footer-ul li {
+	margin-left: 100px;
+	color: red;
+}
+
+ul li {
+	list-style-type: none;
+}
+
+ul li a {
+	text-decoration: none;
+}

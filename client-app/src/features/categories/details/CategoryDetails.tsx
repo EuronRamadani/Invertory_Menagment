@@ -25,7 +25,11 @@ export default observer(function CategoryDetails() {
 
 	return (
 		<Card style={{ width: "70%", marginLeft: "10%" }}>
-			<Image src={`/categoryImages/${category.categoryName}.jpg`} />
+			<Image
+				size="small"
+				style={{ width: "900px", height: "400px" }}
+				src={`/categoryImages/${category.categoryName}.jpeg`}
+			/>
 			<Card.Content>
 				<Card.Header>{category.categoryName}</Card.Header>
 				<Card.Description>Description: {category.description}</Card.Description>

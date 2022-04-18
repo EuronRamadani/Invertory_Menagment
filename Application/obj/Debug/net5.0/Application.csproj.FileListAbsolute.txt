@@ -31,4 +31,3 @@ C:\Users\Notebook\Desktop\Invertory_Menagment\Application\obj\Debug\net5.0\Appli
 C:\Users\Notebook\Desktop\Invertory_Menagment\Application\obj\Debug\net5.0\ref\Application.dll
 C:\Users\Notebook\Desktop\Invertory_Menagment\Application\obj\Debug\net5.0\Application.pdb
 C:\Users\Notebook\Desktop\Invertory_Menagment\Application\obj\Debug\net5.0\Application.csproj.CopyComplete
-C:\Users\Notebook\Desktop\laboratory1\Invertory_Menagment\Application\obj\Debug\net5.0\Application.csproj.CopyComplete

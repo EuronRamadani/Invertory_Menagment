@@ -27,7 +27,7 @@ export default observer(function ManufactureList() {
 					<Item key={manufacture.id}>
 						<Item.Image
 							size="small"
-							src={`/categoryImages/${manufacture.manufacturerName}.jpg`}
+							src={`/manufactureImages/${manufacture.manufacturerName}.jpeg`}
 						/>
 
 						<Item.Content>

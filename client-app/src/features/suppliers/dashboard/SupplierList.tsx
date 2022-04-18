@@ -27,7 +27,7 @@ export default observer(function SupplierList() {
 					<Item key={supplier.id}>
 						<Item.Image
 							size="small"
-							src={`/categoryImages/${supplier.supplierName}.jpg`}
+							src={`/supplierImages/${supplier.supplierName}.jpeg`}
 						/>
 
 						<Item.Content>

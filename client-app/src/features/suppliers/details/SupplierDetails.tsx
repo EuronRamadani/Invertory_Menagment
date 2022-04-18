@@ -25,7 +25,7 @@ export default observer(function SupplierDetails() {
 
 	return (
 		<Card style={{ width: "70%", marginLeft: "10%" }}>
-			<Image src={`/categoryImages/${supplier.supplierName}.jpg`} />
+			<Image src={`/supplierImages/${supplier.supplierName}.jpeg`} />
 			<Card.Content>
 				<Card.Header>{supplier.supplierName}</Card.Header>
 				{/* <Card.Meta>

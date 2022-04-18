@@ -25,7 +25,7 @@ export default observer(function ProductList() {
 			{productsByDate.map((product) => (
 				<Item.Group key={product.id}>
 					<Image
-						src={`/ProductImages/${product.productName}.png`}
+						src={`/ProductImages/${product.productName}.jpeg`}
 						// wrapped
 						ui={false}
 						style={{ height: "200px", width: "695px" }}

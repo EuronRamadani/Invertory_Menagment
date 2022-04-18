@@ -21,6 +21,8 @@ import { useStore } from "../stores/store";
 import { useEffect } from "react";
 import LoadingComponent from "./LoadingComponent";
 import ModalContainer from "../api/common/ModalContainer";
+import Profile from "./Profile";
+import Footer from "./Footer";
 
 function App() {
 	const location = useLocation();
@@ -83,7 +85,10 @@ function App() {
 
 							{/*LoginForm*/}
 							<Route path="/login" component={LoginForm} />
+							<Route path="/Profile" component={Profile} />
+							{/* <Route path="/footer" component={Footer} /> */}
 						</Container>
+						{/* <Footer /> */}
 					</>
 				)}
 			/>

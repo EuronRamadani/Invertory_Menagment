@@ -26,7 +26,7 @@ export default observer(function ProductDetails() {
 	if (loadingInitial || !product) return <LoadingComponent content={""} />;
 	return (
 		<Card style={{ width: "70%", marginLeft: "10%" }}>
-			<Image src={`/ProductImages/${product.productName}.png`} />
+			<Image src={`/ProductImages/${product.productName}.jpeg`} />
 			<Card.Content>
 				<Card.Header>{product.productName}</Card.Header>
 				<Card.Meta>

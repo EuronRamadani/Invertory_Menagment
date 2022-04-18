@@ -28,7 +28,7 @@ export default observer(function CategoryList() {
 					<Item key={category.id}>
 						<Item.Image
 							size="small"
-							src={`/categoryImages/${category.categoryName}.jpg`}
+							src={`/categoryImages/${category.categoryName}.jpeg`}
 						/>
 
 						<Item.Content>
